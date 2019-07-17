@@ -1,4 +1,4 @@
-const { upload, uploadCloud, uploadS3 } = require('./index.js')
+const { upload } = require('./index.js')
 
 async function test () {
   await upload({
