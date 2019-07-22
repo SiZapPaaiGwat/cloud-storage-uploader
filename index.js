@@ -1,5 +1,6 @@
 const COS = require('cos-nodejs-sdk-v5')
 const AWS = require('aws-sdk')
+const mime = require('mime-types')
 const fs = require('fs')
 const path = require('path')
 const zlib = require('zlib')
@@ -28,10 +29,11 @@ function readFileBuffer (filename) {
 
 function uploadQcloud ({ body, key, isGzip, bucket, region, transform }) {
   return new Promise((resolve, reject) => {
+    const fileKey = typeof transform === 'function' ? transform(key) : key
     const params = {
       Bucket: bucket,
       Region: region,
-      Key: typeof transform === 'function' ? transform(key) : key,
+      Key: fileKey,
       ContentLength: body.length,
       Body: body
     }
@@ -40,11 +42,11 @@ function uploadQcloud ({ body, key, isGzip, bucket, region, transform }) {
     }
     cosClient.putObject(params, function (err, data) {
       if (err) {
-        console.log(`**** upload cos error = ${key} ****`)
+        console.log(`**** upload cos error = ${fileKey} ****`)
         console.log(err)
         reject(err)
       } else {
-        console.log(`**** upload cos success = ${key} ****`)
+        console.log(`**** upload cos success = ${fileKey} ****`)
         resolve(data)
       }
     })
@@ -53,11 +55,13 @@ function uploadQcloud ({ body, key, isGzip, bucket, region, transform }) {
 
 function uploadS3 ({ body, key, isGzip, bucket, region, transform }) {
   return new Promise((resolve, reject) => {
+    const fileKey = typeof transform === 'function' ? transform(key) : key
     const params = {
       Bucket: bucket,
       ACL: 'public-read',
-      Key: typeof transform === 'function' ? transform(key) : key,
+      Key: fileKey,
       ContentLength: body.length,
+      ContentType: mime.lookup(fileKey)
       Body: body
     }
     if (isGzip) {
@@ -65,11 +69,11 @@ function uploadS3 ({ body, key, isGzip, bucket, region, transform }) {
     }
     s3Client.putObject(params, function (err, data) {
       if (err) {
-        console.log(`**** upload aws error = ${key} ****`)
+        console.log(`**** upload aws error = ${fileKey} ****`)
         console.log(err)
         reject(err)
       } else {
-        console.log(`**** upload aws success = ${key} ****`)
+        console.log(`**** upload aws success = ${fileKey} ****`)
         resolve(data)
       }
     })
