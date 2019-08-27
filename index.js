@@ -61,7 +61,7 @@ function uploadS3 ({ body, key, isGzip, bucket, region, transform }) {
       ACL: 'public-read',
       Key: fileKey,
       ContentLength: body.length,
-      ContentType: mime.lookup(fileKey),
+      ContentType: mime.lookup(fileKey) || 'application/octet-stream',
       Body: body
     }
     if (isGzip) {
