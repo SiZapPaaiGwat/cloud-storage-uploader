@@ -58,7 +58,6 @@ function uploadS3 ({ body, key, isGzip, bucket, region, transform }) {
     const fileKey = typeof transform === 'function' ? transform(key) : key
     const params = {
       Bucket: bucket,
-      ACL: 'public-read',
       Key: fileKey,
       ContentLength: body.length,
       ContentType: mime.lookup(fileKey) || 'application/octet-stream',
