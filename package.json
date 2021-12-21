@@ -1,6 +1,6 @@
 {
   "name": "cloud-storage-uploader",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "a module for cloud storage uploading, including Tencet's qcloud and Amazon's S3",
   "main": "index.js",
   "scripts": {
